@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <iostream>
 #include <vector>
+#include <climits>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ using namespace std;
 void FoarmNewMatrix(vector<vector<int>> matrix);
 int SumOfNumbers(int num);
 void MatrixOutput(vector<vector<int>>);
+int GetElem();
 
 int main(){
     vector<vector<int>> matrix;
@@ -31,7 +33,7 @@ int main(){
         matrix_row.reserve(n_i);
         cout << "Enter the row of the matrix: ";
         for (int j = 0; j < n_i; ++j){
-            cin >> elem;
+            elem = GetElem();
             matrix_row.push_back(elem);
         }
         matrix.push_back(matrix_row);
@@ -41,6 +43,16 @@ int main(){
     MatrixOutput(matrix);
     cout << "Final matrix: " << endl;
     FoarmNewMatrix(matrix);
+}
+
+int GetElem(){
+    int elem;
+    while (!(cin >> elem) || elem < 0){
+        cout << "Wrong input. Please, try again: ";
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+    }
+    return elem;
 }
 
 
