@@ -14,9 +14,7 @@ Stack::Stack(int size){
     capacity = size;
 }
 
-Stack::~Stack(){
-    l_stack.clear();
-}
+Stack::~Stack(){}
 
 void Stack::push(char elem){
     l_stack.push_front(elem);
@@ -24,10 +22,7 @@ void Stack::push(char elem){
 }
 
 char Stack::pop(){
-    if (top == -1) { 
-        cout << "Stack is empty"; 
-        exit; 
-    } 
+    if (top == -1) return '1';
     char elem = l_stack.head->data;
     l_stack.pop_front();
     top--;
@@ -35,10 +30,7 @@ char Stack::pop(){
 }
 
 char Stack::back(){
-    if (top == -1) { 
-        cout << "Stack is empty"; 
-        exit; 
-    } 
+    if (top == -1) return '1';
     char elem = l_stack.head->data;
     return elem;    
 }

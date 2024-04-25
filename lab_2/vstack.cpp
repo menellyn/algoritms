@@ -25,10 +25,7 @@ Stack::~Stack(){
 }
 
 void Stack::push(char elem){
-    if (top == (capacity - 1)){
-        cout << "Stack Overflow" << endl;
-        return;
-    }
+    if (top == (capacity - 1)) return;
     else{
         top++;
         arr[top] = elem;
@@ -36,10 +33,7 @@ void Stack::push(char elem){
 }
 
 char Stack::pop(){
-    if (top == -1) { 
-        cout << "Stack is empty"; 
-        throw "stack is empty"; 
-    } 
+    if (top == -1) return '1';  
     else {  
         char elem = arr[top];
         top--;
@@ -48,10 +42,7 @@ char Stack::pop(){
 }
 
 char Stack::back(){
-    if (top == -1) { 
-        cout << "Stack is empty"; 
-        throw "stack is empty"; 
-    } 
+    if (top == -1) return '1'; 
     else {  
         return arr[top]; 
     }     

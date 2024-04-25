@@ -8,7 +8,7 @@ LinkedList::LinkedList(){
     head = nullptr;
 }
 
-/*
+
 LinkedList::~LinkedList(){
     while (head){
         Node *node = head;
@@ -16,7 +16,7 @@ LinkedList::~LinkedList(){
         delete node;
     }
 }
-*/
+
 
 void LinkedList::push_front(char data){
     Node* node = new Node(data);

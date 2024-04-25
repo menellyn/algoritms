@@ -16,7 +16,7 @@ public:
     Node *head;
 
     LinkedList();
-    //~LinkedList();
+    ~LinkedList();
 
     void push_front(char data);
     void print();

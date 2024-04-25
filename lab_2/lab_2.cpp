@@ -33,6 +33,10 @@ void PreToInf(string& str){
             string elem1 = "";
             string elem2 = "";
             if (inf_foarm.back() != '('){
+                if (inf_foarm.back() == '1'){
+                    cout << "incorrect formula" << endl;
+                    return;
+                }
                 elem1.push_back(inf_foarm.pop());
                 if (inf_foarm.back() != '(') elem2.push_back(inf_foarm.pop());
                 else{
@@ -57,6 +61,10 @@ void PreToInf(string& str){
                 elem1.push_back(inf_foarm.pop());
                 count1 = 0;
                 count2 = 0;
+                if (inf_foarm.back() == '1'){
+                    cout << "incorrect formula" << endl;
+                    return;
+                }
                 if (inf_foarm.back() != '(') elem2.push_back(inf_foarm.pop());
                 else{
                     count1++;
