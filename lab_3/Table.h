@@ -7,6 +7,10 @@ using namespace std;
 
 struct Node2;
 struct Item;
+struct KeySpace1;
+struct KeySpace2;
+struct Node2;
+
 
 
 struct InfoType{
@@ -112,9 +116,67 @@ private:
 
 public:
     Table(int msize1, int msize2);
+    Table(const Table& other);
     ~Table();
 
     int add(unsigned int key1, unsigned int par, string key2, int info_num1, int info_num2, string info_str);
     void find(unsigned int key1, string key2);
+    void find(string key2, int release);
     int del(unsigned int key1, string key2);
+    int del(string key, int release);
+    int del(unsigned int key1);
+    int del(string key2);
+    void print_table();
+    Table find_by_parent(unsigned int par);
+    Table find_by_key2(string key2);
+
+    Table& operator = (Table&& other){
+        if (this!=&other){
+            delete []ks1;
+            ks1 = other.ks1;
+            other.ks1 = nullptr;
+            for (int i = 0; i<msize2; ++i){
+                delete [] ks2[i];
+            }
+            delete [] ks2;
+            ks2 = other.ks2;
+            other.ks2 = nullptr;
+            msize1 = other.msize1;
+            msize2 = other.msize2;
+        }
+        return *this;
+    };
+
+    Table& operator = (const Table& other){
+        if (this!=&other){
+            delete [] ks1;
+            for (int i = 0; i<msize2; ++i){
+                delete [] ks2[i];
+            }
+            try {
+                ks1 = new KeySpace1[msize1];
+                KeySpace2** ks2 = new KeySpace2*[msize2];
+            }
+            catch (std::bad_alloc& ex) {
+            cout << "Caught bad_alloc: " << ex.what() << endl;
+            return *this;
+            }
+            for (int i = 0; i < msize2;  ++i){
+                ks2[i] = nullptr;
+            }
+            msize1 = other.msize1;
+            msize2 = other.msize2;
+            csize1 = 0;
+            csize2 = 0;
+            for(int i = 0; i < other.csize1; ++i){
+                InfoType* info = new InfoType(other.ks1[i].info->info->num1, other.ks1[i].info->info->num2,
+                    other.ks1[i].info->info->str);
+                Item* item = new Item(other.ks1[i].info->key1, other.ks1[i].info->key2, info);
+                item->p1 = add_in_KS1(other.ks1[i].key, other.ks1[i].par, item);
+                item->p2 = add_in_KS2(other.ks1[i].info->key2, item);
+            }
+            
+        }
+        return *this;
+    };
 };

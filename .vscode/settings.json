@@ -5,6 +5,7 @@
         "string": "cpp",
         "vector": "cpp",
         "iosfwd": "cpp",
-        "climits": "cpp"
+        "climits": "cpp",
+        "new": "cpp"
     }
 }
