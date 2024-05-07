@@ -41,12 +41,16 @@ public:
     void print(T key);
     void draw();
     Node<T>* max();
+    Node<T>* min();
     int del(T key);
     Node<T>* find_node(T key);
     vector<Node<T>*> find_close_elem(T key);
     vector<Node<T>*> find_elems(T key);
     vector<Node<T>*> symmetric_traversal();
     void clear(Node<T>* node);
+    vector<T> LNR_traversal();
+    vector<T> NLR_traversal();
+    bool is_empty();
 };
 
 template <typename T>
@@ -253,6 +257,19 @@ inline Node<T>* BinaryTree<T>::max()
 }
 
 template <typename T>
+inline Node<T> *BinaryTree<T>::min()
+{
+    if (root == nullptr) return nullptr;
+
+    Node<T>* ptr = root;
+    while (ptr->left != nullptr){
+        ptr = ptr->left;
+    }
+
+    return ptr;
+}
+
+template <typename T>
 inline int BinaryTree<T>::del(T key)
 {
     if (root == nullptr) return -1;
@@ -353,34 +370,45 @@ inline vector<Node<T>*> BinaryTree<T>::find_close_elem(T key)
     Node<T> *next, *previous;
     Node<T>* target2 = target;
 
-    if (target->right){
-        next = target->right;
-        while (next->left != nullptr) next = next->left;
-    }
-    else{
-        next = target->parent;
-        while (next != nullptr && next->right == target){
-            target = next;
+    T min_elem = min()->key;
+    T max_elem = max()->key;
+
+    if (max_elem != key){
+        if (target->right){
+            next = target->right;
+            while (next->left != nullptr) next = next->left;
+        }
+        else{
             next = target->parent;
+            while (next != nullptr && next->right == target){
+                target = next;
+                next = target->parent;
+            }
         }
     }
 
-    if (target2->left){
-        previous = target2->left;
-        while (previous->right != nullptr) previous = previous->right;
-    }
-    else{
-        previous = target2->parent;
-        while (previous != nullptr && previous->left == target2){
-            target2 = previous;
+    if (min_elem != key){
+        if (target2->left){
+            previous = target2->left;
+            while (previous->right != nullptr) previous = previous->right;
+        }
+        else{
             previous = target2->parent;
+            while (previous != nullptr && previous->left == target2){
+                target2 = previous;
+                previous = target2->parent;
+            }
         }
     }
 
-    if (key - previous->key <= next->key - key){
-        close_elems = find_elems(previous->key);
+    if (min_elem == key) close_elems = find_elems(next->key);
+    if (max_elem == key) close_elems = find_elems(previous->key);
+    if (min_elem != key && max_elem != key){
+        if (key - previous->key <= next->key - key){
+            close_elems = find_elems(previous->key);
+        }
+        else close_elems = find_elems(next->key);
     }
-    else close_elems = find_elems(next->key);
 
     return close_elems;
 }
@@ -446,4 +474,64 @@ inline void BinaryTree<T>::clear(Node<T> *node)
         delete info;
         delete node;
     }
+}
+
+template <typename T>
+inline vector<T> BinaryTree<T>::LNR_traversal()
+{
+    vector<T> keys;
+    stack<Node<T>*> stack;
+    if (root != nullptr){
+        Node<T>* ptr = root;
+        stack.push(ptr);
+        while (!stack.empty()){
+            while (ptr->left != nullptr) {
+                stack.push(ptr->left);
+                ptr = ptr->left;
+            }
+            ptr = stack.top();
+            stack.pop();
+            keys.push_back(ptr->key);
+            while (ptr->right == nullptr && !stack.empty()){
+                ptr = stack.top();
+                stack.pop();
+                keys.push_back(ptr->key);
+            }
+            if (ptr->right != nullptr) {
+                stack.push(ptr->right);
+                ptr = ptr->right;
+            }
+        }
+    }
+    return keys;
+}
+
+template <typename T>
+inline vector<T> BinaryTree<T>::NLR_traversal()
+{
+    vector<T> keys;
+    stack<Node<T>*> stack;
+    if (root != nullptr){
+        Node<T>* ptr = root;
+        stack.push(ptr);
+        while (!stack.empty()){
+            ptr = stack.top();
+            stack.pop();
+            keys.push_back(ptr->key);
+            if (ptr->right != nullptr) {
+                stack.push(ptr->right);
+            }
+            if (ptr->left != nullptr) {
+                stack.push(ptr->left);
+            }
+        }
+    }
+    return keys;
+}
+
+template <typename T>
+inline bool BinaryTree<T>::is_empty()
+{
+    if (root == nullptr) return true;
+    else return false;
 }
