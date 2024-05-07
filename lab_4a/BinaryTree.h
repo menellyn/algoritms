@@ -217,32 +217,22 @@ inline void BinaryTree<T>::draw()
     file.open("tree.dot");
     file << "digraph tree{" << endl;
 
-    int i = 0;
     while (!queue.empty()){
         ptr = queue.front();
         queue.pop();
-        file << "n" << i << " " << "[label=" << ptr->key << "] ;" << endl;
+        file << ptr->key << ptr->release << " " << "[label=" << ptr->key << "] ;" << endl;
         if (ptr->left != nullptr) {
             queue.push(ptr->left);
-            file << "n" << 2*i+1 << " " << "[label=" << ptr->left->key << "] ;" << endl;
-            file << "n" << i << "->" << "n" << 2*i+1 << ";" << endl;
-        }
-        else{
-            file << "n" << 2*i+1 << " " << "[label=null] ;" << endl;
-            file << "n" << i << "->" << "n" << 2*i+1 << ";" << endl;
+            file << ptr->left->key << ptr->left->release << " " << "[label=" << ptr->left->key << "] ;" << endl;
+            file << ptr->key << ptr->release << "->" << ptr->left->key << ptr->left->release << ";" << endl;
         }
 
         if (ptr->right != nullptr) {
             queue.push(ptr->right);
-            file << "n" << 2*i+2 << " " << "[label=" << ptr->right->key << "] ;" << endl;
-            file << "n" << i << "->" << "n" << 2*i+2 << ";" << endl;
-        }
-        else{
-            file << "n" << 2*i+2 << " " << "[label=null] ;" << endl;
-            file << "n" << i << "->" << "n" << 2*i+2 << ";" << endl;
+            file << ptr->right->key << ptr->right->release << " " << "[label=" << ptr->right->key << "] ;" << endl;
+            file << ptr->key << ptr->release << "->" << ptr->right->key << ptr->right->release << ";" << endl;
         }
 
-        ++i;
     }
     file << "}";
     file.close();
