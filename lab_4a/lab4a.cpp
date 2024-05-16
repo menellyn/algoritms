@@ -22,9 +22,10 @@ int main(){
     BinaryTree<int> new_tree;
     fill_tree("tree_int", new_tree);
     new_tree.draw();
-    new_tree.print();
+    new_tree.print(6);
     
     menu(new_tree);
+    
 }
 
 template <typename T>
