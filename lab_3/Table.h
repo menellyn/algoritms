@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
-#include <iostream>
 #include <stdexcept>
+#include <iostream>
 
 using namespace std;
 
@@ -37,9 +37,6 @@ struct Item{
             key1(key1), key2(key2), p1(p1), p2(p2), info(info) {};
     Item(unsigned int key1, string key2, InfoType* info):
             key1(key1), key2(key2), p1(nullptr), p2(nullptr), info(info) {};
-    ~Item(){
-            delete info;
-    }	
 
 };
 
@@ -54,18 +51,6 @@ struct KeySpace1{
 
     KeySpace1(unsigned int key, unsigned int par, Item* info):
         key(key), par(par), info(info) {};
-    
-    KeySpace1& operator= (KeySpace1&& kSpace){  // перемещающий конструктор
-        if (this != &kSpace){
-            key = kSpace.key;
-            par = kSpace.par;
-            info = kSpace.info;
-            kSpace.info = nullptr;
-        }
-        return *this;
-    }
-
-    KeySpace1& operator= (const KeySpace1& kSpace) = delete;
 
 };
 
@@ -98,13 +83,14 @@ struct Node2{
 
 struct Table{
 private:
-    KeySpace1 	*ks1;  //указатель на первое пространство ключей
-    KeySpace2 	**ks2;  //указатель на второе пространство ключей
 
     int msize1;  //размер области 1-го пространства ключей
     int msize2;	 //размер области 2-го пространства ключей
     int csize1;  //количество элементов в области 1-го пространства ключей
     int csize2;  //количество элементов в области 2-го пространства ключей
+
+    KeySpace1* ks1;  //указатель на первое пространство ключей
+    KeySpace2** ks2;  //указатель на второе пространство ключей
 
     KeySpace1* find_in_KS1(unsigned int key);
     KeySpace2* find_in_KS2(string key);
@@ -120,8 +106,10 @@ public:
     ~Table();
 
     int add(unsigned int key1, unsigned int par, string key2, int info_num1, int info_num2, string info_str);
-    void find(unsigned int key1, string key2);
-    void find(string key2, int release);
+    InfoType* find(unsigned int key1, string key2);
+    pair<unsigned int, InfoType*> find(string key2, int release);
+    pair<string, InfoType> find(unsigned int key1);
+    pair<vector<unsigned int>, vector<InfoType>> find(string key2);
     int del(unsigned int key1, string key2);
     int del(string key, int release);
     int del(unsigned int key1);
@@ -129,6 +117,10 @@ public:
     void print_table();
     Table find_by_parent(unsigned int par);
     Table find_by_key2(string key2);
+    bool empty(){
+        if (csize1 == 0) return true;
+        return false;
+    }
 
     Table& operator = (Table&& other){
         if (this!=&other){

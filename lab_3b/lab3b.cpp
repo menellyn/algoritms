@@ -1,28 +1,29 @@
-#include <cstdio>
 #include <iostream>
 #include <string>
 #include "Table.h"
 
 using namespace std;
+
 void menu(Table& table);
-void print(unsigned int, string, InfoType*);
+void print(Item& item);
 
 int main(){
-    int size_ks1 = 100, size_ks2 = 20;
-    Table my_table(size_ks1, size_ks2);
+    int size_ks1 = 20, size_ks2 = 10;
+    Table my_table;
+    my_table.CreateTable("my_table", size_ks1, size_ks2);
 
-
+    
     my_table.add(1, 0, "str1", 5, 32, "info1");
-    my_table.add(2, 0, "str2", 77, 2, "new_info");
-    my_table.add(3, 1, "strstr", 8, 13, "new_info2");
+    my_table.add(2, 0, "str2", 77, 2, "new");
+    my_table.add(3, 1, "str", 8, 13, "info2");
     my_table.add(8, 3, "str1", 51, 312, "info11");
-    my_table.add(23, 2, "7ds72", 12, 13, "ye7d");
-    my_table.add(326, 2, "hds8wh", 33, 18, "sdh2j");
-    my_table.add(88, 2, "gsayd43g", 76, 12, "sh3bdj");
-    my_table.add(374, 0, "7ds72", 36, 111, "hd73hs");
-    my_table.add(773, 0, "7ds72", 382, 152, "dh3jq");
-    my_table.add(97, 3, "gsayd43g", 3828, 127, "dj3j2k");
-
+    my_table.add(23, 2, "7ds", 12, 13, "ye7d");
+    my_table.add(326, 2, "hd", 33, 18, "sdh2j");
+    my_table.add(88, 2, "gs", 76, 12, "sh3bdj");
+    my_table.add(374, 0, "7ds", 36, 111, "hd73hs");
+    my_table.add(773, 0, "7ds", 382, 152, "dh3jq");
+    my_table.add(97, 3, "gs", 3, 1, "dj");
+    
     menu(my_table);
 
 }
@@ -40,7 +41,7 @@ void menu(Table &table)
     cout << "Enter command: ";
     cin >> com;
     if (com == 1){
-        unsigned int key1, par;
+        int key1, par;
         string key2, str_info;
         int num1, num2;
         cout << "Enter key1: ";
@@ -56,58 +57,63 @@ void menu(Table &table)
         cout << "Enter str: ";
         cin >> str_info;
         int flag = table.add(key1, par, key2, num1, num2, str_info);
-        if (flag == -1) cout << "Table is full" << endl;
-        else if (flag == -2) cout << "Key can't be 0" << endl;
-        else if (flag == -3) cout << "No such parent key = " << par << endl;
-        else if (flag == -4) cout << "key1 = " << key1 << " already exists. Key must be unique" << endl;
-        else if (flag == -5) cout << "(key1, key2) must be unique" << endl;
+        if (flag == -1) cout << "No table attached" << endl;
+        else if (flag == -2) cout << "Table is full" << endl;
+        else if (flag == -3) cout << "Key can't be 0" << endl;
+        else if (flag == -4) cout << "No such parent key = " << par << endl;
+        else if (flag == -5) cout << "key1 = " << key1 << " already exists. Key must be unique" << endl;
         menu(table);
     }
     else if (com == 2){
-        unsigned int key1;
+        int key1;
         string key2;
         cout << "Enter key1: ";
         cin >> key1;
         cout << "Enter key2: ";
         cin >> key2;
-        InfoType* info = table.find(key1, key2);
-        if (info == nullptr) cout << "No such key or pair (key1, key2)";
-        else print(key1, key2, info);
+        Item info = table.find(key1, key2);
+        if (info.key1 == 0) cout << "No such key or pair (key1, key2)";
+        else print(info);
         menu(table);
     }
     else if (com == 3){
-        unsigned int key1;
+        int key1;
         string key2;
         cout << "Enter key1: ";
         cin >> key1;
         cout << "Enter key2: ";
         cin >> key2;
         int flag = table.del(key1, key2);
-        if (flag == -1) cout << "No such key" << endl;
-        else if (flag == -2) cout << "No such pair of keys" << endl;
+        if (flag == -1) cout << "No table attached" << endl;
+        else if (flag == -2) cout << "No such key" << endl;
         else if (flag == -3) cout << "Can't delete, the key1 is the parent key" << endl;
+        else if (flag == -4) cout << "No such pair of keys" << endl;
         menu(table);
     }
     else if (com == 4){
-        unsigned int key1;
+        int key1;
         cout << "Enter key1: ";
         cin >> key1;
-        pair<string, InfoType> elem = table.find(key1);
-        if (elem.first == "") cout << "No such key" << endl;
-        else print(key1, elem.first, &elem.second);
+        Item elem = table.find(key1);
+        if (elem.key1 == 0) cout << "No such key" << endl;
+        else print(elem);
         menu(table);
     }
     else if(com == 5){
-        string key2;
+        string key2, name;
         cout << "Enter key2: ";
         cin >> key2;
-        Table new_table = table.find_by_key2(key2);
-        if (new_table.empty()) cout << "No such key" << endl;
-        else new_table.print_table();
+        cout << "Enter name of result table: ";
+        cin >> name;
+        table.find(name, key2);
+        Table new_table;
+        new_table.AttachTable(name);
+        if (new_table.IsEmpty()) cout << "No such key" << endl;
+        else new_table.print();
         menu(table);
     }
     else if (com == 6){
-        unsigned int key1;
+        int key1;
         cout << "Enter key1: ";
         cin >> key1;
         int flag = table.del(key1);
@@ -123,16 +129,21 @@ void menu(Table &table)
         menu(table);
     }
     else if (com == 8){
-        table.print_table();
+        table.print();
         menu(table);
     }
     else if (com == 9){
-        unsigned int par;
+        int par;
         cout << "Enter parent key: ";
         cin >> par;
-        Table par_table = table.find_by_parent(par);
-        if (par_table.empty()) cout << "No such parent" << endl;
-        else par_table.print_table();
+        string name;
+        cout << "Enter name of result table: ";
+        cin >> name;
+        Table par_table;
+        table.find_by_par(name, par);
+        par_table.AttachTable(name);
+        if (par_table.IsEmpty()) cout << "No such parent" << endl;
+        else par_table.print();
         menu(table);
     }
     else if (com == 10){
@@ -142,9 +153,9 @@ void menu(Table &table)
         int release;
         cout << "Enter release: ";
         cin >> release;
-        pair<unsigned int, InfoType*> elem = table.find(key2, release);
-        if (elem.first == 0) cout << "No such key or release" << endl;
-        else print(elem.first, key2, elem.second);
+        Item elem = table.find(key2, release);
+        if (elem.key1 == 0) cout << "No such key or release" << endl;
+        else print(elem);
         menu(table);
     }
     else if (com == 11){
@@ -162,7 +173,7 @@ void menu(Table &table)
 
 }
 
-void print(unsigned int key1, string key2, InfoType *info)
+void print(Item &item)
 {
     cout.width(70);
     cout << right;
@@ -189,15 +200,15 @@ void print(unsigned int key1, string key2, InfoType *info)
     cout.width(10);
     cout << right << "|" ;
     cout.width(10);
-    cout << right << key1;
+    cout << right << item.key1;
     cout.width(10);
     cout << right << "|" ;
     cout.width(10);
-    cout << right << key2;
+    cout << right << item.key2;
     cout.width(10);
     cout << right << "|" ;
     cout.width(10);
-    cout << right << info->num1;
+    cout << right << item.num1;
     cout.width(10);
     cout << right << "|" << endl;
     cout.width(10);
@@ -211,7 +222,7 @@ void print(unsigned int key1, string key2, InfoType *info)
     cout.width(10);
     cout << right << "|" ;
     cout.width(10);
-    cout << right << info->num2;
+    cout << right << item.num2;
     cout.width(10);
     cout << right << "|" << endl;
     cout.width(10);
@@ -225,7 +236,7 @@ void print(unsigned int key1, string key2, InfoType *info)
     cout.width(10);
     cout << right << "|" ;
     cout.width(10);
-    cout << right << info->str;
+    cout << right << item.str;
     cout.width(10);
     cout << right << "|" << endl;
     cout.width(70);
